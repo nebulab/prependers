@@ -1,0 +1,13 @@
+inherit_from:
+  - https://relaxed.ruby.style/rubocop.yml
+
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  Exclude:
+    - spec/support/files/**/*
+
+Metrics/BlockLength:
+  Enabled: false
