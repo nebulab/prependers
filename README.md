@@ -1,5 +1,7 @@
 # Prependers
 
+[![CircleCI](https://circleci.com/gh/nebulab/prependers.svg?style=svg)](https://circleci.com/gh/nebulab/prependers)
+
 Prependers are a way to easily and cleanly extend third-party code via `Module#prepend`.
 
 ## Installation
