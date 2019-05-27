@@ -102,6 +102,28 @@ If you use autoloading, you can pass the base namespace to `#load_paths`:
 Prependers.load_paths(File.expand_path('app/prependers'), namespace: MyApp)
 ```
 
+### Integrating with Rails
+
+To use prependers in your Rails app, simply create them under `app/prependers/models`,
+`app/prependers/controllers` etc. and add the following to your `config/application.rb`:
+
+```ruby
+config.to_prepare do
+  Dir.glob(Rails.root.join('app', 'prependers', '**', '*.rb')) do |c|
+    Rails.configuration.cache_classes ? require(c) : load(c)
+  end
+
+  prepender_paths = Dir.glob(Rails.root.join('app', 'prependers', '*')).map do |p|
+    File.expand_path(p, __FILE__)
+  end
+
+  Prependers.load_paths(*prepender_paths)
+end
+```
+
+If you want to use a namespace, just pass the `:namespace` option to `#load_paths` and name your
+files and modules accordingly.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run
