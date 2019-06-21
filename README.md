@@ -28,7 +28,7 @@ $ gem install prependers
 ## Usage
 
 To define a prepender manually, simply include the `Prependers::Prepender.new` module. For instance,
-if you have installed an `animals` gem and you want to extend the `Animals::Dog` class, you can
+if you have installed an `animals` gem and you want to extend the `Animals::Dog` class(using inline namespacing to avoid [class conflicts](https://techblog.thescore.com/2014/05/28/how-you-nest-modules-matters-in-ruby/), you can
 define a module like the following:
 
 ```ruby
