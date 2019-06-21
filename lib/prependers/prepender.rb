@@ -12,7 +12,7 @@ module Prependers
       prepended_module_name = base.name.split('::')[0..-2].join('::')
 
       if namespace
-        prepended_module_name = "#{prepended_module_name[(namespace.name.length + 2)..-1]}"
+        prepended_module_name = (prepended_module_name[(namespace.name.length + 2)..-1]).to_s
       end
 
       prepended_module = Object.const_get(prepended_module_name)
