@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Alessandro Desantis"]
   spec.email         = ["desa.alessandro@gmail.com"]
 
-  spec.summary       = 'Decorate vendor code with style.'
+  spec.summary       = 'Easily and cleanly extend third-party code.'
   spec.homepage      = 'https://github.com/nebulab/prependers'
   spec.license       = "MIT"
 
