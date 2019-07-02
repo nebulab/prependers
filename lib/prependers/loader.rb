@@ -10,7 +10,7 @@ module Prependers
     end
 
     def load
-      Dir.glob("#{base_path}/**/*.rb") do |path|
+      Dir.glob("#{base_path}/**/*.rb").sort.each do |path|
         absolute_path = Pathname.new(File.expand_path(path))
         relative_path = absolute_path.relative_path_from(base_path)
 

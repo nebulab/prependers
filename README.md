@@ -45,7 +45,9 @@ Animals::Dog.new.bark # => 'Woof!'
 
 ### Autoloading prependers
 
-If you don't want to include `Prependers::Prepender`, you can also autoload prependers from a path.
+If you don't want to include `Prependers::Prepender`, you can also autoload prependers from a path,
+they will be loaded in alphabetical order.
+
 Here's the previous example, but with autoloading:
 
 ```ruby
