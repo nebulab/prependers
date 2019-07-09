@@ -43,6 +43,28 @@ end
 Animals::Dog.new.bark # => 'Woof!'
 ```
 
+### Extending class methods
+
+If you want to extend a module's class methods, you can define a `ClassMethods` module in your
+prepender:
+
+```ruby
+module Animals::Dog::AddBarking
+  include Prependers::Prepender.new
+
+  module ClassMethods
+    def family
+      puts 'Canids'
+    end
+  end
+end
+
+Animals::Dog.family # => 'Canids'
+```
+
+As you can see, the `ClassMethods` module has automagically been `prepend`ed to the `Animals::Dog`'s
+singleton class.
+
 ### Autoloading prependers
 
 If you don't want to include `Prependers::Prepender`, you can also autoload prependers from a path,
