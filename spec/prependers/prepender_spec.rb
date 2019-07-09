@@ -8,6 +8,12 @@ RSpec.describe Prependers::Prepender do
       module Dog::AddBarking # rubocop:disable Style/ClassAndModuleChildren
         include Prependers::Prepender.new
 
+        module ClassMethods
+          def bark
+            'Class woof!'
+          end
+        end
+
         def bark
           'Woof!'
         end
@@ -16,6 +22,10 @@ RSpec.describe Prependers::Prepender do
 
     it 'prepends the base module to the prepended module' do
       expect(Dog.new.bark).to eq('Woof!')
+    end
+
+    it "prepends the ClassMethods module to the prepended module's singleton class" do
+      expect(Dog.bark).to eq('Class woof!')
     end
   end
 
@@ -28,6 +38,12 @@ RSpec.describe Prependers::Prepender do
           module AddMeow
             include Prependers::Prepender.new(Acme)
 
+            module ClassMethods
+              def meow
+                'Class meow!'
+              end
+            end
+
             def meow
               'Meow!'
             end
@@ -38,6 +54,10 @@ RSpec.describe Prependers::Prepender do
 
     it 'prepends the base module to the prepended module' do
       expect(Cat.new.meow).to eq('Meow!')
+    end
+
+    it "prepends the ClassMethods module to the prepended module's singleton class" do
+      expect(Cat.meow).to eq('Class meow!')
     end
   end
 end
