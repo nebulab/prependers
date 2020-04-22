@@ -7,6 +7,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Added `Prependers.setup_for_rails` helper for Rails integration
+- Added support for Rails 6 and Zeitwerk 
+
 ## [0.2.0] - 2019-07-09
 
 ### Added

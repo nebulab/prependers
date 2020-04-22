@@ -49,7 +49,7 @@ If you want to extend a module's class methods, you can define a `ClassMethods` 
 prepender:
 
 ```ruby
-module Animals::Dog::AddBarking
+module Animals::Dog::AddFamily
   include Prependers::Prepender.new
 
   module ClassMethods
@@ -134,21 +134,11 @@ To use prependers in your Rails app, simply create them under `app/prependers/mo
 `app/prependers/controllers` etc. and add the following to your `config/application.rb`:
 
 ```ruby
-config.to_prepare do
-  Dir.glob(Rails.root.join('app', 'prependers', '**', '*.rb')) do |c|
-    Rails.configuration.cache_classes ? require(c) : load(c)
-  end
-
-  prepender_paths = Dir.glob(Rails.root.join('app', 'prependers', '*')).map do |p|
-    File.expand_path(p, __FILE__)
-  end
-
-  Prependers.load_paths(*prepender_paths)
-end
+Prependers.setup_for_rails
 ```
 
-If you want to use a namespace, just pass the `:namespace` option to `#load_paths` and name your
-files and modules accordingly.
+If you want to use a namespace, just pass the `:namespace` option to `#setup_for_rails` and name
+your files and modules accordingly.
 
 ## Development
 
