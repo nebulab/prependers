@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/nebulab/prependers/tree/HEAD)
+## [v0.3.0](https://github.com/nebulab/prependers/tree/v0.3.0) (2020-04-24)
 
-[Full Changelog](https://github.com/nebulab/prependers/compare/v0.2.0...HEAD)
+[Full Changelog](https://github.com/nebulab/prependers/compare/v0.2.0...v0.3.0)
 
 **Merged pull requests:**
 
