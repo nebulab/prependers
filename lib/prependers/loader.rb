@@ -29,7 +29,10 @@ module Prependers
         end
 
         prepender = Object.const_get(prepender_name)
-        prepender.include(Prepender.new(options))
+
+        if prepender.ancestors.none? { |ancestor| ancestor.is_a?(Prependers::Prepender) }
+          prepender.include(Prepender.new(options))
+        end
       end
     end
 

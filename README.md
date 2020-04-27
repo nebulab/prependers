@@ -79,9 +79,6 @@ module MyApp
       module AddBarking
         include Prependers::Prepender[namespace: MyApp]
 
-        # If you are autoloading prependers, use this instead:
-        include Prependers::Annotate::Namespace[MyApp]
-
         def bark
           puts 'Woof!'
         end
@@ -106,9 +103,6 @@ To use original source verification in your prependers, pass the `:verify` optio
 ```ruby
 module Animals::Dog::AddBarking
   include Prependers::Prepender[verify: nil]
-
-  # If you are autoloading prependers, use this instead:
-  include Prependers::Annotate::Verify['f7175533215c39f3f3328aa5829ac6b1bb168218']
 
   # ...
 end
@@ -190,24 +184,15 @@ Prependers.load_paths(
 )
 ```
 
-#### Autoloading and namespaces
-
-As you have seen in the examples for namespaces and original source verification, the syntax for
-enabling these features changes slightly when you are using autoloading.
-
-In the case of namespaces, you can also pass the `:namespace` option directly to `load_paths`, so
-that you don't have to specify it for each prepender:
+You can pass the `:namespace` option to `#load_paths` to have it forwarded to all prependers:
 
 ```ruby
 Prependers.load_paths(
   File.expand_path('app/prependers/controllers'),
   File.expand_path('app/prependers/models'),
-  namespace: Acme
+  namespace: Acme,
 )
 ```
-
-(If you're wondering, yes, you can also do this with `:verify`, although it wouldn't make much sense
-since the hash is different for each prepender.)
 
 ### Integrating with Rails
 
