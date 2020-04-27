@@ -2,6 +2,7 @@
 
 require "prependers/version"
 require "prependers/errors"
+require "prependers/annotate/namespace"
 require "prependers/prepender"
 require "prependers/loader"
 
@@ -24,5 +25,15 @@ module Prependers
         end
       end
     end
+  end
+
+  def self.prependable_for(prepender)
+    prependable = prepender.name.split('::')[0..-2].join('::')
+
+    if prepender.respond_to?(:__prependers_namespace__)
+      prependable = (prependable[(prepender.__prependers_namespace__.name.length + 2)..-1]).to_s
+    end
+
+    Object.const_get(prependable)
   end
 end
