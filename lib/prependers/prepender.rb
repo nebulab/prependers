@@ -2,26 +2,40 @@
 
 module Prependers
   class Prepender < Module
-    CLASS_METHODS_MODULE_NAME = 'ClassMethods'
+    def self.[](options = {})
+      new(options)
+    end
 
-    attr_reader :namespace
+    attr_reader :options
 
-    def initialize(namespace = nil)
-      @namespace = namespace
+    NAMESPACE_DEPRECATION = \
+      "[DEPRECATION] Passing a namespace to `Prependers::Prepender#[]` is deprecated. Use the " \
+      "`:namespace` option instead."
+
+    def initialize(options_or_namespace = {})
+      if options_or_namespace.is_a?(Module)
+        warn NAMESPACE_DEPRECATION % { namespace: options_or_namespace }
+        options_or_namespace = { namespace: options_or_namespace }
+      end
+
+      @options = options_or_namespace
     end
 
     def included(base)
-      prepended_module_name = base.name.split('::')[0..-2].join('::')
-
-      if namespace
-        prepended_module_name = (prepended_module_name[(namespace.name.length + 2)..-1]).to_s
+      if options.key?(:namespace)
+        base.include Prependers::Annotate::Namespace.new(options[:namespace])
       end
 
-      prepended_module = Object.const_get(prepended_module_name)
-      prepended_module.prepend base
+      if options.key?(:verify)
+        base.include Prependers::Annotate::Verify.new(options[:verify])
+      end
 
-      if base.const_defined?(CLASS_METHODS_MODULE_NAME)
-        prepended_module.singleton_class.prepend base.const_get(CLASS_METHODS_MODULE_NAME)
+      prependable = Prependers.prependable_for(base)
+
+      prependable.prepend(base)
+
+      if base.const_defined?('ClassMethods')
+        prependable.singleton_class.prepend(base.const_get('ClassMethods'))
       end
     end
   end

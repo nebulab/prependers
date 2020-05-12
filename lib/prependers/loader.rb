@@ -2,6 +2,11 @@
 
 module Prependers
   class Loader
+    UNDEFINED_PREPENDER_ERROR = \
+      "Expected `%{path}` to define `%{prepender}`, but it is not defined.\n\n" \
+      "This is most likely because the file has not been required.\n\n" \
+      "Require the file yourself before calling `Prependers.load_paths`."
+
     attr_reader :base_path, :options
 
     def initialize(base_path, options = {})
@@ -14,21 +19,20 @@ module Prependers
         absolute_path = Pathname.new(File.expand_path(path))
         relative_path = absolute_path.relative_path_from(base_path)
 
-        prepender_module_name = expected_module_for(relative_path)
+        prepender_name = expected_module_for(relative_path)
 
-        unless Object.const_defined?(prepender_module_name)
-          error = <<~ERROR
-            Expected #{absolute_path} to define #{prepender_module_name}, but module is not defined.
-
-            Note that Prependers does not require files automatically - you will have to do that
-            yourself before calling `#load_paths`.
-          ERROR
-
-          raise NoPrependerError, error
+        unless Object.const_defined?(prepender_name)
+          raise NoPrependerError, UNDEFINED_PREPENDER_ERROR % {
+            path: absolute_path,
+            prepender: prepender_name,
+          }
         end
 
-        prepender_module = Object.const_get(prepender_module_name)
-        prepender_module.include Prepender.new(options[:namespace])
+        prepender = Object.const_get(prepender_name)
+
+        if prepender.ancestors.none? { |ancestor| ancestor.is_a?(Prependers::Prepender) }
+          prepender.include(Prepender.new(options))
+        end
       end
     end
 

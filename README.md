@@ -18,7 +18,6 @@ And then execute:
 $ bundle
 ```
 
-
 Or install it yourself as:
 
 ```console
@@ -27,13 +26,13 @@ $ gem install prependers
 
 ## Usage
 
-To define a prepender manually, simply include the `Prependers::Prepender.new` module. For instance,
+To define a prepender manually, simply include the `Prependers::Prepender[]` module. For instance,
 if you have installed an `animals` gem and you want to extend the `Animals::Dog` class, you can
 define a module like the following:
 
 ```ruby
 module Animals::Dog::AddBarking
-  include Prependers::Prepender.new
+  include Prependers::Prepender[]
 
   def bark
     puts 'Woof!'
@@ -50,7 +49,7 @@ prepender:
 
 ```ruby
 module Animals::Dog::AddFamily
-  include Prependers::Prepender.new
+  include Prependers::Prepender[]
 
   module ClassMethods
     def family
@@ -62,13 +61,100 @@ end
 Animals::Dog.family # => 'Canids'
 ```
 
-As you can see, the `ClassMethods` module has automagically been `prepend`ed to the `Animals::Dog`'s
+As you can see, the `ClassMethods` module has automagically been `prepend`ed to `Animals::Dog`'s
 singleton class.
+
+### Using a namespace
+
+It can be useful to have a prefix namespace for your prependers. That way, you don't have to worry
+about accidentally overriding any vendor modules. This is actually the recommended way to define
+your prependers.
+
+You can accomplish this by passing the `:namespace` option when including `Prependers::Prepender`:
+
+```ruby
+module MyApp
+  module Animals
+    module Dog
+      module AddBarking
+        include Prependers::Prepender[namespace: MyApp]
+
+        def bark
+          puts 'Woof!'
+        end
+      end
+    end
+  end
+end
+```
+
+### Verifying original sources
+
+One issue you may run into when extending third-party code is that, when the original implementation
+is updated, it's not always obvious whether you have to update any of your extensions.
+
+Prependers make this a bit easier with the concept of original source verification: you can compute
+a SHA1 hash of the original implementation, store it along with your prepender, and then verify it
+against the current hash when your application loads. If the original source changes, you get an
+error asking you to ensure your prepender is still relevant.
+
+To use original source verification in your prependers, pass the `:verify` option:
+
+```ruby
+module Animals::Dog::AddBarking
+  include Prependers::Prepender[verify: nil]
+
+  # ...
+end
+```
+
+When you load your application now, you will get an error with instructions on how to set the proper
+hash:
+
+```
+Prependers::OutdatedPrependerError:
+  You have not defined an original hash for Animals::Dog in Animals::Dog::AddBarking.
+
+  You can define the hash by updating your include statement as follows:
+
+      include Prependers::Prepender[verify: 'f7175533215c39f3f3328aa5829ac6b1bb168218']
+```
+
+At this point, you should update your prepender with the correct hash:
+
+```ruby
+module Animals::Dog::AddBarking
+  include Prependers::Prepender[verify: 'f7175533215c39f3f3328aa5829ac6b1bb168218']
+
+  # ...
+end
+```
+
+Now, when the underlying implementation of `Animals::Dog` changes because of a dependency update or
+other reasons, Prependers will raise an error such as the following:
+
+```
+Prependers::OutdatedPrependerError:
+  The stored hash for Animals::Dog in Animals::Dog::AddBarking is
+  f7175533215c39f3f3328aa5829ac6b1bb168218, but the current hash is
+  2f05682e4f46b509c23a8418d9427a9eeaa8a79e instead.
+
+  This most likely means that the original source has changed.
+
+  Check that your prepender is still valid, then update the stored hash:
+
+      include Prependers::Prepender[verify: '2f05682e4f46b509c23a8418d9427a9eeaa8a79e']
+```
+
+Original source verification also works when a module is defined in multiple locations. 
+
+*NOTE: Due to limitations in Ruby's API, it is not possible to use source verification with modules
+that don't define any methods. Prependers will raise an error if you try to do this.*
 
 ### Autoloading prependers
 
-If you don't want to include `Prependers::Prepender`, you can also autoload prependers from a path,
-they will be loaded in alphabetical order.
+If you don't want to include `Prependers::Prepender[]`, you can also autoload prependers from a
+path, they will be loaded in alphabetical order.
 
 Here's the previous example, but with autoloading:
 
@@ -84,6 +170,9 @@ end
 Prependers.load_paths(File.expand_path('app/prependers'))
 ```
 
+Note that, in order for autoprepending to work, the paths of your prependers must match the names
+of the prependers you defined.
+
 You can pass multiple arguments to `#load_paths`, which is useful if you have subdirectories in
 `app/prependers`:
 
@@ -95,37 +184,14 @@ Prependers.load_paths(
 )
 ```
 
-Note that, in order for autoprepending to work, the paths of your prependers must match the names
-of the prependers you defined.
-
-### Using a namespace
-
-It can be useful to have a prefix namespace for your prependers. That way, you don't have to worry
-about accidentally overriding any vendor modules. This is actually the recommended way to define
-your prependers.
-
-You can accomplish this by passing an argument when including the `Prependers::Prepender` module:
+You can pass the `:namespace` option to `#load_paths` to have it forwarded to all prependers:
 
 ```ruby
-module MyApp
-  module Animals
-    module Dog
-      module AddBarking
-        include Prependers::Prepender.new(MyApp)
-
-        def bark
-          puts 'Woof!'
-        end
-      end
-    end
-  end
-end
-```
-
-If you use autoloading, you can pass the base namespace to `#load_paths`:
-
-```ruby
-Prependers.load_paths(File.expand_path('app/prependers'), namespace: MyApp)
+Prependers.load_paths(
+  File.expand_path('app/prependers/controllers'),
+  File.expand_path('app/prependers/models'),
+  namespace: Acme,
+)
 ```
 
 ### Integrating with Rails
@@ -137,8 +203,7 @@ To use prependers in your Rails app, simply create them under `app/prependers/mo
 Prependers.setup_for_rails
 ```
 
-If you want to use a namespace, just pass the `:namespace` option to `#setup_for_rails` and name
-your files and modules accordingly.
+`#setup_for_rails` accepts the same options as `#load_paths`.
 
 ## Development
 

@@ -12,5 +12,11 @@ AllCops:
 Metrics/BlockLength:
   Enabled: false
 
+RSpec/ExampleLength:
+  Enabled: false
+
 Style/GuardClause:
   Enabled: false
+
+Style/FormatStringToken:
+  EnforcedStyle: template
