@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.0.0](https://github.com/nebulab/prependers/tree/v1.0.0) (2020-05-14)
+
+[Full Changelog](https://github.com/nebulab/prependers/compare/v0.3.0...v1.0.0)
+
+**Closed issues:**
+
+- Check for integrity of the original files [\#10](https://github.com/nebulab/prependers/issues/10)
+
+**Merged pull requests:**
+
+- Implement original source verification [\#11](https://github.com/nebulab/prependers/pull/11) ([aldesantis](https://github.com/aldesantis))
+
 ## [v0.3.0](https://github.com/nebulab/prependers/tree/v0.3.0) (2020-04-24)
 
 [Full Changelog](https://github.com/nebulab/prependers/compare/v0.2.0...v0.3.0)
