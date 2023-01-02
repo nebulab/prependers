@@ -9,7 +9,7 @@ module Prependers
 
     attr_reader :base_path, :options
 
-    def initialize(base_path, options = {})
+    def initialize(base_path, **options)
       @base_path = Pathname.new(File.expand_path(base_path))
       @options = options
     end

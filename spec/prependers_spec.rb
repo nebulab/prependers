@@ -3,11 +3,12 @@
 RSpec.describe Prependers do
   describe '.load_paths' do
     it 'instantiates and executes a Loader' do
-      args = ['foo', namespace: 'test']
+      args = ['foo']
+      options = { namespace: 'test' }
       loader = instance_spy('Prependers::Loader')
-      allow(Prependers::Loader).to receive(:new).with(*args).and_return(loader)
+      allow(Prependers::Loader).to receive(:new).with(*args, **options).and_return(loader)
 
-      described_class.load_paths(*args)
+      described_class.load_paths(*args, **options)
 
       expect(loader).to have_received(:load)
     end
