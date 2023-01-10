@@ -23,7 +23,7 @@ module Prependers
       config.autoload_paths += prependers_directories
 
       config.to_prepare do
-        Prependers.load_paths(prependers_directories, load_options)
+        Prependers.load_paths(prependers_directories, **load_options)
       end
     end
   end
